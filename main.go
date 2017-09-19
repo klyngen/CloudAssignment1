@@ -70,7 +70,9 @@ func requestData(url string) (data []byte) {
 	return
 }
 
+// Puts data from requests into one connected 
 func generatePayload(url string) (payload Payload) {
+	// Declares structs for containing data
 	owner := new(OwnerContainer)
 	langs := new(map[string]interface{})
 	contrib := new([1]TopComitter)
@@ -117,6 +119,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/projectinfo/v1/", handler) // Setter en spesifik handler for root
-	http.ListenAndServe(":8081", nil)
+	http.ListenAndServe(":80", nil)
 
 }
