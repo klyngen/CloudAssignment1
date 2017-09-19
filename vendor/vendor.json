@@ -2,7 +2,7 @@
 	"comment": "",
 	"ignore": "test",
 	"package": [],
-	"rootPath": "../Assignment1"
+	"rootPath": "../../bin/Assignment1"
 	"heroku": {
         	"install" : [ "./..." ],
         	"goVersion": "go1.8"
