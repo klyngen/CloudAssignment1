@@ -1,1 +1,2 @@
-$PORT=80
+export port=$PORT:80
+

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"os"
 )
 
 // OwnerT - struct containing ownerinfo
@@ -118,7 +119,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	port := os.Getenv("PORT")
 	http.HandleFunc("/projectinfo/v1/", handler) // Setter en spesifik handler for root
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(":"+port, nil)
 
 }
