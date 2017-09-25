@@ -5,9 +5,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"os"
+	"strings"
 )
+
+// ErrorStruct - struct for containing error to user
+type ErrorStruct struct {
+	Header      string `json:"header"`
+	Description string `json"description"`
+}
 
 // OwnerT - struct containing ownerinfo
 type OwnerT struct {
@@ -71,7 +77,7 @@ func requestData(url string) (data []byte) {
 	return
 }
 
-// Puts data from requests into one connected 
+// Puts data from requests into one connected
 func generatePayload(url string) (payload Payload) {
 	// Declares structs for containing data
 	owner := new(OwnerContainer)
@@ -89,15 +95,44 @@ func generatePayload(url string) (payload Payload) {
 	collectData(contributeResponse, contrib) // Reads contribution info
 
 	// Assign values to struct
-	payload.Committer = contrib[0].Login
+	payload.Committer = contrib[0].Login // Assemples the payload struct
 	payload.Committs = contrib[0].Contributions
 	payload.Owner = owner.Owner.Login
 
+	// Loops the languages and extracts only keys and not how many
+	// lines of code
 	for r := range *langs {
 		payload.Languages = append(payload.Languages, r)
 	}
 
 	return
+}
+
+// Returns false if fields not set
+// return true if more than to fields is set
+func verifyPayload(payload Payload) bool {
+	ok := 3
+	if payload.Committs < 1 {
+		ok--
+	}
+
+	if len(payload.Committer) < 1 {
+		ok--
+	}
+
+	if len(payload.Name) < 1 {
+		ok--
+	}
+
+	if len(payload.Owner) < 1 {
+		ok--
+	}
+
+	if ok > 0 {
+		return true
+	}
+
+	return false
 }
 
 // Parses the request-body and puts it in the referenced variable
@@ -107,6 +142,9 @@ func collectData(data []byte, payload interface{}) {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	payload := generatePayload(getAPIURL(r.URL.RequestURI()))
+	errors := new(ErrorStruct)
+	errors.Header = "404"
+	errors.Description = "No such resource"
 
 	output, err := json.Marshal(payload)
 	if err != nil {
